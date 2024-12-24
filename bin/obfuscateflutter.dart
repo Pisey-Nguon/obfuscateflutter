@@ -11,6 +11,7 @@ import 'package:obfuscateflutter/gen_android_proguard_dicr.dart';
 import 'package:obfuscateflutter/img_change_md5.dart';
 import 'package:obfuscateflutter/proguard_images.dart';
 import 'package:obfuscateflutter/reame_libs_dir_names.dart';
+import 'package:obfuscateflutter/rename_classes_name.dart';
 import 'package:obfuscateflutter/rename_files_name.dart';
 import 'package:obfuscateflutter/temp_proj_utils.dart';
 import 'package:path/path.dart' as p;
@@ -59,19 +60,20 @@ void main(List<String> arguments) async {
 
 void _readTaskAndDo(String projectPath, String pubSpaceName) {
   print(r'''
-  please select task to run
-  1.修改图片MD5
-  2.混淆图片名称并清理
-  3.生成Android Proguard混淆字典
-  4.重命名lib下的目录名称
-  5.重命名所有文件名
-  6.混淆项目中所有的String (not finish yet!)
-  7.打包Android Apk
-  8.打包Android AAB
-  9.打包IOS IPA测试包
+please select task to run
+1. Modify image MD5
+2. Obfuscate image name and clean it
+3. Generate Android Proguard obfuscation dictionary
+4. Rename directory name under lib
+5. Rename all file names
+6. Obfuscate all Strings in the project (not finished yet!)
+7. Package Android Apk
+8. Package Android AAB
+9. Package IOS IPA test package
+10. Rename all class names
 
-  x.在临时生成目录中进行执行上述混淆任务并打包''');
-  print('输入要运行的任务：');
+ x. Perform the above obfuscation tasks and package them in the temporary generation directory''');
+  print('Enter the task to run:');
   var task = stdin.readLineSync();
 
   switch (task) {
@@ -120,6 +122,11 @@ void _readTaskAndDo(String projectPath, String pubSpaceName) {
         _runBuildIpa(projectPath, true);
         break;
       }
+    case "10":
+      {
+        _runObfuscateAllClassNames(projectPath);
+        break;
+      }
     case "x":
       {
         changeToTempDirAndRun(projectPath, pubSpaceName,
@@ -130,7 +137,8 @@ void _readTaskAndDo(String projectPath, String pubSpaceName) {
           _runGenAndroidProguardDict(projectPathNew);
           _runObfuscateAllLibsDirs(projectPathNew, pubSpaceName);
           _runObfuscateAllFileNames(projectPathNew);
-          print('!!!混淆任务已经完成!!!');
+          _runObfuscateAllClassNames(projectPath);
+          print('!!!The confusion mission has been completed!!!');
           List<bool> tasks = await _askWhichToBuild();
           await _runBuild(projectPath, projectPathNew, tasks[0], tasks[1],
               tasks[2], tasks[3]);
@@ -174,6 +182,12 @@ _runObfuscateAllFileNames(String projectPath) {
   sleep(Duration(seconds: 3));
   print("start rename lib's child file name and refresh code import");
   renameAllFileNames(projectPath);
+}
+
+_runObfuscateAllClassNames(String projectPath) {
+  sleep(Duration(seconds: 3));
+  print("start rename lib's child class name and refresh code import");
+  renameAllClassesName(projectPath);
 }
 
 _encrypetString(String projectPath) {
